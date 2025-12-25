@@ -41,9 +41,10 @@
 #define ATTR_EM_CURRENT_SUMMATION       0x0520   // Total Current Summation (mAh)
 
 struct MatterLikeHeader {
-  uint32_t messageCounter;
-  uint16_t sessionId;
-  uint8_t flags;
+    uint8_t  version;
+    uint32_t messageCounter;
+    uint16_t sessionId;
+    uint8_t  flags;
 };
 
 struct MatterLikePayload {
@@ -59,4 +60,13 @@ struct MatterLikePayload {
 struct MatterLikePacket {
   MatterLikeHeader header;
   MatterLikePayload payload;
+};
+
+struct MacAddress {
+    uint8_t bytes[6];
+};
+
+struct MatterPacketWithMac {
+  MacAddress mac;
+  MatterLikePacket packet;
 };

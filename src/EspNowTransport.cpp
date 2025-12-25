@@ -1,5 +1,6 @@
 #include "EspNowTransport.h"
 #include "MatterLikePacket.h"
+#include "MatterLikeCodec.h"
 #include <cstring>
 #include <WiFi.h>
 #include <esp_wifi.h>
@@ -56,15 +57,15 @@ bool EspNowTransport::begin() {
 
 bool EspNowTransport::send(const uint8_t *peerMac, const MatterLikePacket &packet) {
 
-    if (sizeof(MatterLikePacket) > MAX_ESP_NOW_FRAME) { // ESP-NOW max payload ~250B
+    if (MatterLikeCodec::WireSize > MAX_ESP_NOW_FRAME) { // ESP-NOW max payload ~250B
         Serial.println("Packet too large for ESP-NOW!");
         return false;
     }
 
-    uint8_t buffer[sizeof(MatterLikePacket)];
-    memcpy(buffer, &packet, sizeof(MatterLikePacket));
+    uint8_t buffer[MatterLikeCodec::WireSize];
+    MatterLikeCodec::encode(packet, buffer);
    
-    esp_err_t result = esp_now_send(peerMac, buffer, sizeof(MatterLikePacket));
+    esp_err_t result = esp_now_send(peerMac, buffer, MatterLikeCodec::WireSize);
     return (result == ESP_OK);
 }
 
@@ -80,17 +81,17 @@ void EspNowTransport::onDataRecv(const esp_now_recv_info_t *info, const uint8_t 
         Serial.printf("EspNowTransport - userReceiver NOT REGISTERED!!!\n");
         return;
     }
+ 
+    MatterPacketWithMac pkt;
+    // copy MAC address
+    memcpy(pkt.mac.bytes, info->src_addr, 6);
 
-    if (len != sizeof(MatterLikePacket)) {
-        Serial.printf("Invalid ESP-NOW packet size: %d bytes (expected %u)\n",
-                      len, sizeof(MatterLikePacket));
+    if (!MatterLikeCodec::decode(pkt.packet, data, len)) {
+        Serial.printf("EspNowTransport - Packet decode FAILED, len=%d\n", len);
         return;
     }
 
-    MatterLikePacket pkt;
-    memcpy(&pkt, data, sizeof(MatterLikePacket));
-
-    userReceiver->handlePacket(pkt, info->src_addr);
+    userReceiver->handlePacket(pkt);
 }
 
 
