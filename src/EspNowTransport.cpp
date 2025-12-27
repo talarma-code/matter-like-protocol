@@ -9,26 +9,22 @@
 static uint8_t MAX_ESP_NOW_FRAME = 250;
 
 IMatterReceiver* EspNowTransport::userReceiver = nullptr;
-static const uint8_t MAC_LOCAL_HEATER[]  = {0x74, 0x61, 0x6C, 0x61, 0x72, 0x31}; // talar1 - heater
-static const uint8_t MAC_CENTRALKA[]   = {0x74, 0x61, 0x6C, 0x61, 0x72, 0x30}; // talar0 - centrala
 
 
-bool EspNowTransport::begin() {
+
+bool EspNowTransport::begin(const uint8_t *myMac, const uint8_t *peerMac) {
     delay(300);
-
-    Serial.println("\n=== SHL Heater Controller Start ===");
-
     WiFi.mode(WIFI_STA);
 
     // set MAC address for this device (NEW: esp_wifi_set_mac requiered seperate include)
-    if (esp_wifi_set_mac(WIFI_IF_STA, (uint8_t*)MAC_LOCAL_HEATER) != ESP_OK) {
+    if (esp_wifi_set_mac(WIFI_IF_STA, myMac) != ESP_OK) {
         Serial.println("⚠ Could not set custom MAC!");
     }
 
     Serial.print("Local MAC set to: ");
     Serial.printf("%02X:%02X:%02X:%02X:%02X:%02X\n",
-                   MAC_LOCAL_HEATER[0], MAC_LOCAL_HEATER[1], MAC_LOCAL_HEATER[2],
-                   MAC_LOCAL_HEATER[3], MAC_LOCAL_HEATER[4], MAC_LOCAL_HEATER[5]);
+                   myMac[0], myMac[1], myMac[2],
+                   myMac[3], myMac[4], myMac[5]);
 
     // Start ESP-NOW
     if (esp_now_init() != ESP_OK) {
@@ -38,7 +34,7 @@ bool EspNowTransport::begin() {
 
     // Add reciver (heater) as PEER
     esp_now_peer_info_t peerInfo = {};
-    memcpy(peerInfo.peer_addr, MAC_CENTRALKA, 6);
+    memcpy(peerInfo.peer_addr, peerMac, 6);
     peerInfo.channel = 0;  // the same channel as in WiFi
     peerInfo.encrypt = false;
 

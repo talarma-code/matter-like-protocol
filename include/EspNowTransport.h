@@ -7,7 +7,7 @@
 class EspNowTransport : public IMatterLikeTransport {
 public:
 
-    bool begin() override;
+    bool begin(const uint8_t *myMac, const uint8_t *peerMac) override;
     bool send(const uint8_t *peerMac, const MatterLikePacket &packet) override;
     void onPacketReceived(IMatterReceiver *receiver) override;
 
