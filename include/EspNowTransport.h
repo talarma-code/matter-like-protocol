@@ -12,7 +12,7 @@ public:
     void onPacketReceived(IMatterReceiver *receiver) override;
 
 private:
-    static void onDataRecv(const esp_now_recv_info_t *esp_now_info, const uint8_t *data, int len);
+    static void onDataRecv(const uint8_t *mac_addr, const uint8_t *data, int len);
     static void onDataSent(const uint8_t *mac_addr, esp_now_send_status_t status);
 
     static IMatterReceiver *userReceiver;

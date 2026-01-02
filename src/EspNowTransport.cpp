@@ -70,7 +70,7 @@ void EspNowTransport::onPacketReceived(IMatterReceiver *receiver) {
     userReceiver = receiver;
 }
 
-void EspNowTransport::onDataRecv(const esp_now_recv_info_t *info, const uint8_t *data, int len) {
+void EspNowTransport::onDataRecv(const uint8_t *mac_addr, const uint8_t *data, int len) {
 
     Serial.println("EspNowTransport::onDataRecv");
     if (!userReceiver) {
@@ -80,7 +80,7 @@ void EspNowTransport::onDataRecv(const esp_now_recv_info_t *info, const uint8_t 
  
     MatterPacketWithMac pkt;
     // copy MAC address
-    memcpy(pkt.mac.bytes, info->src_addr, 6);
+    memcpy(pkt.mac.bytes, mac_addr, 6);
 
     if (!MatterLikeCodec::decode(pkt.packet, data, len)) {
         Serial.printf("EspNowTransport - Packet decode FAILED, len=%d\n", len);
