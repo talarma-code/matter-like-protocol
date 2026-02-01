@@ -63,8 +63,12 @@ MatterLikePacket MatterLike::createAckPacket(const MatterLikePacket& receivedPac
     return packet;
 }
 
-bool MatterLike::isAckPacket(const MatterLikePacket& receivedPacket) {
+bool MatterLike::isAckRequestPacket(const MatterLikePacket& receivedPacket) {
     return receivedPacket.header.flags & ML_FLAG_ACK_REQUEST;
+}
+
+bool MatterLike::isAckResponsePacket(const MatterLikePacket& receivedPacket) {
+    return receivedPacket.header.flags & ML_FLAG_ACK_RESPONSE;
 }
 
 // -------------------------------
@@ -99,7 +103,7 @@ MatterLikePayload MatterLike::createElectricalPayload(uint16_t nodeId, uint8_t e
     payload.fabricId = DEFAULT_FABRIC_ID;
     payload.nodeId = nodeId;
     payload.endpointId = endpointId;
-    payload.clusterId = 0x0B04; // Electrical Measurement Cluster
+    payload.clusterId = CLUSTER_ELECTRICAL_MEAS; // Electrical Measurement Cluster
     payload.attributeId = attributeId;
     payload.commandId = commandId;
     payload.value = value;

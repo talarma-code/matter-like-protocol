@@ -19,7 +19,8 @@ public:
     static MatterLikePacket createReportAttributePacket(const MatterLikePacket& receivedPacket, int32_t value);
 
     static MatterLikePacket createAckPacket(const MatterLikePacket& receivedPacket);
-    static bool isAckPacket(const MatterLikePacket& receivedPacket);
+    static bool isAckRequestPacket(const MatterLikePacket& receivedPacket);
+    static bool isAckResponsePacket(const MatterLikePacket& receivedPacket);
 
 private:
     // -------------------------------
