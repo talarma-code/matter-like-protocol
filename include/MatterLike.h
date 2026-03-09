@@ -15,6 +15,7 @@ public:
     static MatterLikePacket createReadOnOffPacket(uint16_t nodeId, uint8_t endpointId);
     
     static MatterLikePacket createReadElectricalPacket(uint16_t nodeId, uint8_t endpointId, uint16_t attributeId);
+    static MatterLikePacket createReadTotalActivePowerPacket(uint16_t nodeId, uint8_t endpointId);
     static MatterLikePacket createReportAttributePacket(uint16_t nodeId, uint8_t endpointId, uint16_t clusterId, uint16_t attributeId, int32_t value);
     static MatterLikePacket createReportAttributePacket(const MatterLikePacket& receivedPacket, int32_t value);
 

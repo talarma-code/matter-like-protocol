@@ -31,6 +31,11 @@ MatterLikePacket MatterLike::createReadElectricalPacket(uint16_t nodeId, uint8_t
     return createPacket(messageCounter++, payload);
 }
 
+MatterLikePacket MatterLike::createReadTotalActivePowerPacket(uint16_t nodeId, uint8_t endpointId)
+{
+    return createReadElectricalPacket(nodeId, endpointId, ATTR_EM_ENERGY);
+}
+
 MatterLikePacket MatterLike::createReportAttributePacket(uint16_t nodeId, uint8_t endpointId, uint16_t clusterId, uint16_t attributeId, int32_t value)
 {
     MatterLikePayload payload;
